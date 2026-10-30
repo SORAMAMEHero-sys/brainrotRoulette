@@ -90,7 +90,7 @@
 
         textarea {
             resize: vertical;
-            height: 120px;
+            height: 100px;
             font-family: monospace;
         }
 
@@ -113,7 +113,7 @@
             transform: scale(1.02);
         }
 
-        /* ルーレット部分（心理戦：SSRが広く見えるが、止まるのはNかハズレ） */
+        /* ルーレット部分（公平な50%/50%分割） */
         .roulette-container {
             position: relative;
             width: 250px;
@@ -129,11 +129,9 @@
             position: relative;
             overflow: hidden;
             transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
-            /* 見た目はSSR(金色)が約70%を占める心理戦仕様！ */
             background: conic-gradient(
-                #ffd700 0deg 250deg,    
-                #ff4444 250deg 305deg,  
-                #44aa44 305deg 360deg   
+                #44aa44 0deg 180deg,    /* 当り枠（50%） */
+                #ff4444 180deg 360deg   /* はずれ枠（50%） */
             );
         }
 
@@ -171,7 +169,7 @@
             font-size: 0.95rem;
             line-height: 1.6;
             color: var(--text-main);
-            min-height: 150px;
+            min-height: 120px;
             border: 1px dashed #4a1d85;
             margin-bottom: 15px;
         }
@@ -187,7 +185,7 @@
 <body>
 
     <h1>🎰 ブレインロットカジノ 🎰</h1>
-    <div class="subtitle">〜 1回100チップ・心理戦ルーレット配信ツール 〜</div>
+    <div class="subtitle">〜 1回100チップ・フェアな50/50ルーレット配信ツール 〜</div>
 
     <div class="container">
         <!-- 左側：カジノフロア -->
@@ -215,32 +213,30 @@
             <div class="status-box" id="result-message">名前を決めてスピン！</div>
         </div>
 
-        <!-- 右側：自由に書き換えられるテキスト・画像エリア -->
+        <!-- 右側：自由に書き換えられるインフォメーション＆ルール -->
         <div class="panel">
-            <h2>📌 インフォメーション / キャラ紹介</h2>
+            <h2>📌 インフォメーション / ルール</h2>
             
-            <!-- リアルタイムプレビューされる場所 -->
+            <!-- プレビューされる場所 -->
             <div class="preview-box" id="display-area">
-                <p><b>✨ 現在のルール</b></p>
+                <p><b>✨ カジノのルール</b></p>
                 <p>・1回 100チップ消費！</p>
-                <p>・見た目はSSRが爆当たりしそうですが…？w</p>
+                <p>・当たるもハズレも運次第の公正な50/50ルーレットです！</p>
             </div>
 
             <!-- 自由に文字が打てるテキスト欄 -->
             <div class="form-group">
-                <label>📝 自由編集テキスト欄（HTMLタグ使用可）</label>
-                <textarea id="custom-input"><p><b>✨ 現在のルール</b></p>
+                <label>📝 ルール・紹介文の編集（HTMLタグ使用可）</label>
+                <textarea id="custom-input"><p><b>✨ カジノのルール</b></p>
 <p>・1回 100チップ消費！</p>
-<p>・見た目はSSRが爆当たりしそうですが…？w</p>
-<!-- 画像を入れたいときは下のタグのURLを書き換えてね -->
-<!-- <img src="画像のURL" alt="キャラ"> --></textarea>
+<p>・当たるもハズレも運次第の公正な50/50ルーレットです！</p></textarea>
             </div>
-            <button onclick="updateFreeArea()">文字・画像を反映する！</button>
+            <button onclick="updateFreeArea()">インフォを反映する！</button>
         </div>
     </div>
 
     <script>
-        let chips = 500; // 初期チップを少し余裕のある500に設定
+        let chips = 500;
         let isSpinning = false;
         let currentRotation = 0;
 
@@ -253,7 +249,6 @@
             updateDisplay();
         }
 
-        // 自由テキスト欄の内容をプレビューに反映させる関数
         function updateFreeArea() {
             const userInput = document.getElementById('custom-input').value;
             document.getElementById('display-area').innerHTML = userInput;
@@ -262,7 +257,7 @@
         function spinRoulette() {
             if (isSpinning) return;
             const name = document.getElementById('player-name').value.trim();
-            const bet = 100; // 1回固定のベット額
+            const bet = 100;
 
             if (!name) {
                 alert('TikTokネームを入力してください！');
@@ -279,17 +274,16 @@
             
             document.getElementById('result-message').innerText = `${name} さんが 100チップベット！回転中……`;
 
-            // 【完全犯罪イカサマ】
-            // 確率：Nが50% / はずれが50%（※見た目のSSRエリアには絶対に止まらない！）
-            const isN = Math.random() < 0.5; 
+            // 【フェアな確率判定】50%の確率で当り、50%ではずれ
+            const isWin = Math.random() < 0.5;
 
             let targetDegree;
-            if (isN) {
-                // Nのエリア（305度〜360度）に強制着地
-                targetDegree = Math.random() * 50 + 310;
+            if (isWin) {
+                // 当りエリア（0度〜180度）にランダム着地
+                targetDegree = Math.random() * 160 + 10;
             } else {
-                // はずれのエリア（250度〜305度）に強制着地
-                targetDegree = Math.random() * 50 + 255;
+                // はずれエリア（180度〜360度）にランダム着地
+                targetDegree = Math.random() * 160 + 190;
             }
             
             const extraSpins = 360 * 5; 
@@ -300,12 +294,12 @@
 
             setTimeout(() => {
                 isSpinning = false;
-                if (isN) {
-                    const reward = Math.floor(bet * 1.2); // 100 × 1.2 = 120チップバック（20チップの微増）
+                if (isWin) {
+                    const reward = Math.floor(bet * 2); // 当たったら2倍返し（200チップ）
                     chips += reward;
-                    document.getElementById('result-message').innerHTML = `🎉 <span style="color:#44aa44;">【N】当り！(+${reward}チップ獲得)</span> 微妙なプラス！`;
+                    document.getElementById('result-message').innerHTML = `🎉 <span style="color:#44aa44;">【当り！】(+${reward}チップ獲得)</span> お見事！`;
                 } else {
-                    document.getElementById('result-message').innerHTML = `💀 <span style="color:#ff4444;">【はずれ】没収！(-100チップ)</span> 綺麗に溶けましたwww`;
+                    document.getElementById('result-message').innerHTML = `💀 <span style="color:#ff4444;">【はずれ】(-100チップ)</span> 残念…！`;
                 }
                 updateDisplay();
             }, 4000);
