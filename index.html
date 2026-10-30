@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ブレインロットカジノ</title>
+    <style>
+        :root {
+            --bg-color: #0f051d;
+            --panel-bg: #1a0b2e;
+            --accent-glow: #ff007f;
+            --accent-gold: #ffd700;
+            --text-main: #ffffff;
+            --text-sub: #b19cd9;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px var(--accent-glow);
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 900px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border: 2px solid var(--accent-glow);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
+            flex: 1;
+            min-width: 300px;
+        }
+
+        h2 {
+            border-bottom: 2px solid var(--accent-glow);
+            padding-bottom: 5px;
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: var(--accent-gold);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            background: #2a1147;
+            border: 1px solid #4a1d85;
+            color: white;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff007f, #7f00ff);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
+            transition: 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        /* ルーレット部分 */
+        .roulette-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 20px auto;
+        }
+
+        #roulette-wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid var(--accent-gold);
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
+            background: conic-gradient(
+                #ff4444 0deg 180deg,
+                #44aa44 180deg 360deg
+            );
+        }
+
+        .roulette-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 20px solid var(--accent-gold);
+            z-index: 10;
+        }
+
+        .wheel-label {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            left: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .status-box {
+            margin-top: 15px;
+            padding: 10px;
+            background: #110422;
+            border-radius: 6px;
+            text-align: center;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #2a1147;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .shop-item button {
+            width: auto;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        .inventory-list {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            max-height: 100px;
+            overflow-y: auto;
+            background: #110422;
+            padding: 8px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎰 ブレインロットカジノ 🎰</h1>
+    <div class="subtitle">〜 見た目は豪華、中身は絶望の50/50ルーレット 〜</div>
+
+    <div class="container">
+        <!-- プレイヤー・ルーレットパネル -->
+        <div class="panel">
+            <h2>🎲 カジノフロア</h2>
+            <div class="form-group">
+                <label>TikTokネーム</label>
+                <input type="text" id="player-name" placeholder="例：@brainrot_king">
+            </div>
+            <div class="form-group">
+                <label>所持チップ（カジノコイン）</label>
+                <div id="player-chips" style="font-size: 1.5rem; color: var(--accent-gold); font-weight: bold;">100 枚</div>
+            </div>
+            <div class="form-group">
+                <label>賭けるチップ数</label>
+                <input type="number" id="bet-amount" value="10" min="1">
+            </div>
+
+            <!-- ルーレット本体 -->
+            <div class="roulette-container">
+                <div class="roulette-pointer"></div>
+                <div id="roulette-wheel"></div>
+            </div>
+
+            <button id="spin-btn" onclick="spinRoulette()">ルーレットを回す！</button>
+            <div class="status-box" id="result-message">名前とチップを決めてスピン！</div>
+        </div>
+
+        <!-- 景品交換所パネル -->
+        <div class="panel">
+            <h2>🏪 ブレインロット景品交換所</h2>
+            <div style="margin-bottom: 15px;">
+                <label>獲得したキャラクター一覧</label>
+                <div class="inventory-list" id="inventory">まだ何も持っていません</div>
+            </div>
+            
+            <label>交換ラインナップ</label>
+            <div id="shop-list">
+                <!-- JSで動的生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ゲームの状態管理
+        let chips = 100;
+        let inventory = [];
+        let isSpinning = false;
+        let currentRotation = 0;
+
+        // ショップのラインナップ（自由に変更可能）
+        const shopItems = [
+            { name: "ツブヨンコ・エダマメ", price: 50, rarity: "N" },
+            { name: "ジャック・ソラマメ", price: 150, rarity: "R" },
+            { name: "ヴォルカリオン", price: 500, rarity: "SSR" }
+        ];
+
+        function initShop() {
+            const shopContainer = document.getElementById('shop-list');
+            shopContainer.innerHTML = '';
+            shopItems.forEach((item, index) => {
+                shopContainer.innerHTML += `
+                    <div class="shop-item">
+                        <span>[${item.rarity}] ${item.name} (${item.price}チップ)</span>
+                        <button onclick="buyItem(${index})">交換する</button>
+                    </div>
+                `;
+            });
+        }
+
+        function updateDisplay() {
+            document.getElementById('player-chips').innerText = chips + ' 枚';
+            const invDiv = document.getElementById('inventory');
+            if (inventory.length === 0) {
+                invDiv.innerText = 'まだ何も持っていません';
+            } else {
+                invDiv.innerText = inventory.join(', ');
+            }
+        }
+
+        function spinRoulette() {
+            if (isSpinning) return;
+            const name = document.getElementById('player-name').value.trim();
+            const bet = parseInt(document.getElementById('bet-amount').value);
+
+            if (!name) {
+                alert('TikTokネームを入力してください！');
+                return;
+            }
+            if (isNaN(bet) || bet <= 0) {
+                alert('正しいチップ数を入力してください！');
+                return;
+            }
+            if (bet > chips) {
+                alert('チップが足りません！');
+                return;
+            }
+
+            isSpinning = true;
+            chips -= bet; // 賭け金を差し引き
+            updateDisplay();
+            document.getElementById('result-message').innerText = `${name} さんが ${bet} チップベット！回転中……`;
+
+            // 【完全犯罪イカサマの心臓部】
+            // 結果は完全に「N（50%）」か「はずれ（50%）」のどちらかに固定
+            const isWin = Math.random() < 0.5; 
+            // Nなら 0〜180度付近、はずれなら 180〜360度付近に着地させる
+            // 見た目は豪華なルーレットを何回転もさせる（最低5回転 + ランダムオフセット）
+            const targetDegree = isWin ? (Math.random() * 160 + 10) : (Math.random() * 160 + 190);
+            
+            const extraSpins = 360 * 5; 
+            currentRotation += extraSpins + (targetDegree - (currentRotation % 360));
+
+            const wheel = document.getElementById('roulette-wheel');
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                if (isWin) {
+                    // N：微増（賭け金の1.2倍返し）
+                    const reward = Math.floor(bet * 1.2);
+                    chips += reward;
+                    document.getElementById('result-message').innerHTML = `🎉 <span style="color:#44aa44;">【N】当り！(+${reward}チップ)</span> 微妙なプラス！`;
+                } else {
+                    // はずれ：全額没収
+                    document.getElementById('result-message').innerHTML = `💀 <span style="color:#ff4444;">【はずれ】全額没収！</span> 店長ニコニコ大勝利！`;
+                }
+                updateDisplay();
+            }, 4000); // 4秒後に結果発表
+        }
+
+        function buyItem(index) {
+            const item = shopItems[index];
+            if (chips >= item.price) {
+                chips -= item.price;
+                inventory.push(item.name);
+                updateDisplay();
+                alert(`${item.name} を手に入れた！`);
+            } else {
+                alert('チップが足りません！');
+            }
+        }
+
+        // 初期化実行
+        initShop();
+        updateDisplay();
+    </script>
+</body>
+</html>
