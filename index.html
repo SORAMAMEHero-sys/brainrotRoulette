@@ -113,7 +113,7 @@
             transform: scale(1.02);
         }
 
-        /* ルーレット部分（公平な50%/50%分割） */
+        /* ルーレット部分：色と角度を明確に定義 */
         .roulette-container {
             position: relative;
             width: 250px;
@@ -130,8 +130,9 @@
             overflow: hidden;
             transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
             background: conic-gradient(
-                #44aa44 0deg 180deg,    /* 当り枠（50%） */
-                #ff4444 180deg 360deg   /* はずれ枠（50%） */
+                #ffd700 0deg 250deg,    /* 黄色エリア：0度〜250度 */
+                #44aa44 250deg 310deg,  /* 緑色エリア：250度〜310deg */
+                #ff4444 310deg 360deg   /* 赤色エリア：310度〜360deg */
             );
         }
 
@@ -161,7 +162,6 @@
             font-weight: bold;
         }
 
-        /* 表示用のプレビューエリア */
         .preview-box {
             background: #110422;
             padding: 15px;
@@ -185,7 +185,7 @@
 <body>
 
     <h1>🎰 ブレインロットカジノ 🎰</h1>
-    <div class="subtitle">〜 1回100チップ・フェアな50/50ルーレット配信ツール 〜</div>
+    <div class="subtitle">〜 1回100チップ・ルーレット配信ツール 〜</div>
 
     <div class="container">
         <!-- 左側：カジノフロア -->
@@ -217,19 +217,17 @@
         <div class="panel">
             <h2>📌 インフォメーション / ルール</h2>
             
-            <!-- プレビューされる場所 -->
             <div class="preview-box" id="display-area">
                 <p><b>✨ カジノのルール</b></p>
                 <p>・1回 100チップ消費！</p>
-                <p>・当たるもハズレも運次第の公正な50/50ルーレットです！</p>
+                <p>・止まった色によって結果が変わるよ！</p>
             </div>
 
-            <!-- 自由に文字が打てるテキスト欄 -->
             <div class="form-group">
                 <label>📝 ルール・紹介文の編集（HTMLタグ使用可）</label>
                 <textarea id="custom-input"><p><b>✨ カジノのルール</b></p>
 <p>・1回 100チップ消費！</p>
-<p>・当たるもハズレも運次第の公正な50/50ルーレットです！</p></textarea>
+<p>・止まった色によって結果が変わるよ！</p></textarea>
             </div>
             <button onclick="updateFreeArea()">インフォを反映する！</button>
         </div>
@@ -274,16 +272,20 @@
             
             document.getElementById('result-message').innerText = `${name} さんが 100チップベット！回転中……`;
 
-            // 【フェアな確率判定】50%の確率で当り、50%ではずれ
-            const isWin = Math.random() < 0.5;
+            // 【完全一致の抽選ロジック】
+            // CSSの配色にあわせて、着地する角度をランダムに決定
+            // 0: 黄色エリア (0〜250度)
+            // 1: 緑色エリア (250〜310度)
+            // 2: 赤色エリア (310〜360度)
+            const outcome = Math.floor(Math.random() * 3);
 
             let targetDegree;
-            if (isWin) {
-                // 当りエリア（0度〜180度）にランダム着地
-                targetDegree = Math.random() * 160 + 10;
+            if (outcome === 0) {
+                targetDegree = Math.random() * 230 + 10; // 黄色
+            } else if (outcome === 1) {
+                targetDegree = Math.random() * 50 + 255;  // 緑
             } else {
-                // はずれエリア（180度〜360度）にランダム着地
-                targetDegree = Math.random() * 160 + 190;
+                targetDegree = Math.random() * 45 + 315;  // 赤
             }
             
             const extraSpins = 360 * 5; 
@@ -294,12 +296,19 @@
 
             setTimeout(() => {
                 isSpinning = false;
-                if (isWin) {
-                    const reward = Math.floor(bet * 2); // 当たったら2倍返し（200チップ）
+                if (outcome === 0) {
+                    // 黄色：小当り（120チップ獲得）
+                    const reward = 120;
                     chips += reward;
-                    document.getElementById('result-message').innerHTML = `🎉 <span style="color:#44aa44;">【当り！】(+${reward}チップ獲得)</span> お見事！`;
+                    document.getElementById('result-message').innerHTML = `💛 <span style="color:#ffd700;">【黄色】当り！(+${reward}チップ)</span>`;
+                } else if (outcome === 1) {
+                    // 緑：大当り（200チップ獲得）
+                    const reward = 200;
+                    chips += reward;
+                    document.getElementById('result-message').innerHTML = `🎉 <span style="color:#44aa44;">【緑】大当り！！(+${reward}チップ)</span>`;
                 } else {
-                    document.getElementById('result-message').innerHTML = `💀 <span style="color:#ff4444;">【はずれ】(-100チップ)</span> 残念…！`;
+                    // 赤：はずれ（没収）
+                    document.getElementById('result-message').innerHTML = `💀 <span style="color:#ff4444;">【赤】はずれ(-100チップ)</span>`;
                 }
                 updateDisplay();
             }, 4000);
