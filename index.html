@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>カードめくりカジノ</title>
+    <title>カードめくりカジノ - 20枚グリッド版</title>
     <style>
         :root {
             --bg-color: #0f051d;
@@ -19,7 +19,7 @@
             color: var(--text-main);
             font-family: 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
-            padding: 15px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -30,13 +30,13 @@
             text-shadow: 0 0 10px var(--accent-glow);
             margin-bottom: 5px;
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
         }
 
         .subtitle {
             color: var(--text-sub);
-            font-size: 0.85rem;
-            margin-bottom: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
             text-align: center;
         }
 
@@ -44,7 +44,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
-            max-width: 1000px;
+            max-width: 1050px;
             width: 100%;
             justify-content: center;
         }
@@ -53,45 +53,52 @@
             background-color: var(--panel-bg);
             border: 2px solid var(--accent-glow);
             border-radius: 12px;
-            padding: 15px;
+            padding: 12px;
             box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
             flex: 1;
-            min-width: 300px;
+            min-width: 320px;
+        }
+
+        /* 裏カジノモード時のパネルデザイン変化 */
+        .panel.secret-mode {
+            background-color: #2e0b16;
+            border-color: #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
         }
 
         h2 {
             border-bottom: 2px solid var(--accent-glow);
-            padding-bottom: 5px;
+            padding-bottom: 4px;
             margin-top: 0;
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--accent-gold);
         }
 
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         label {
             display: block;
-            margin-bottom: 4px;
-            font-size: 0.85rem;
+            margin-bottom: 3px;
+            font-size: 0.8rem;
             color: var(--text-sub);
         }
 
         input[type="text"], textarea {
             width: 100%;
-            padding: 8px;
+            padding: 6px;
             box-sizing: border-box;
             background: #2a1147;
             border: 1px solid #4a1d85;
             color: white;
             border-radius: 6px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         textarea {
             resize: vertical;
-            height: 90px;
+            height: 75px;
             font-family: monospace;
         }
 
@@ -99,10 +106,10 @@
             background: linear-gradient(45deg, #ff007f, #7f00ff);
             color: white;
             border: none;
-            padding: 10px;
+            padding: 8px;
             width: 100%;
             border-radius: 6px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
@@ -114,33 +121,52 @@
             transform: scale(1.02);
         }
 
-        /* 12枚カードのグリッドレイアウト（4列×3行） */
+        /* モード切替ボタン */
+        .mode-btn {
+            background: linear-gradient(45deg, #444, #666);
+            margin-bottom: 10px;
+            border: 1px dashed var(--accent-gold);
+        }
+        .mode-btn.active-secret {
+            background: linear-gradient(45deg, #ff0000, #ff8c00);
+            color: #fff;
+            border: 1px solid #fff;
+        }
+
+        /* 20枚カードのグリッドレイアウト（5列×4行） */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin: 15px 0;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin: 10px 0;
         }
 
         .card {
             background: linear-gradient(135deg, #2a1147, #4a1d85);
             border: 2px solid var(--accent-glow);
-            border-radius: 8px;
+            border-radius: 6px;
             aspect-ratio: 3 / 4;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 0.85rem;
             font-weight: bold;
             cursor: pointer;
             transition: 0.2s;
-            box-shadow: 0 0 5px rgba(255, 0, 127, 0.3);
+            box-shadow: 0 0 4px rgba(255, 0, 127, 0.3);
             user-select: none;
         }
 
         .card:hover {
             transform: translateY(-2px);
             border-color: var(--accent-gold);
+        }
+
+        .card .card-num {
+            font-size: 0.65rem;
+            color: var(--text-sub);
+            margin-bottom: 1px;
         }
 
         .card.flipped {
@@ -161,73 +187,88 @@
             border-color: #fff;
         }
 
+        .card.scam {
+            background: linear-gradient(135deg, #8b008b, #ff1493);
+            color: #fff;
+            border-color: #ff00ff;
+        }
+
+        .card.revenge {
+            background: linear-gradient(135deg, #00ced1, #1e90ff);
+            color: #000;
+            border-color: #fff;
+        }
+
+        .card.bomb {
+            background: linear-gradient(135deg, #ff4500, #8b0000);
+            color: #fff;
+            border-color: #ff0000;
+        }
+
         .card.lose {
             background: linear-gradient(135deg, #444, #222);
             color: #888;
         }
 
         .status-box {
-            margin-top: 10px;
-            padding: 10px;
+            margin-top: 8px;
+            padding: 8px;
             background: #110422;
             border-radius: 6px;
             text-align: center;
-            min-height: 35px;
+            min-height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
         }
 
         .preview-box {
             background: #110422;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            font-size: 0.9rem;
-            line-height: 1.5;
+            font-size: 0.85rem;
+            line-height: 1.4;
             color: var(--text-main);
-            min-height: 100px;
+            min-height: 90px;
             border: 1px dashed #4a1d85;
-            margin-bottom: 12px;
-        }
-
-        .preview-box img {
-            max-width: 100%;
-            border-radius: 6px;
-            margin-top: 8px;
-            border: 1px solid var(--accent-glow);
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-    <h1>🃏 カードめくりカジノ 🃏</h1>
-    <div class="subtitle">〜 1回100チップ・12枚から選ぶ運試し 〜</div>
+    <h1 id="main-title">🃏 20枚カードめくりカジノ 🃏</h1>
+    <div class="subtitle" id="sub-title">〜 20枚のグリッドから運命の1枚を選べ！ 〜</div>
 
     <div class="container">
         <!-- 左側：カジノフロア -->
-        <div class="panel">
-            <h2>🎲 カジノフロア</h2>
+        <div class="panel" id="casino-panel">
+            <h2 id="panel-title">🎲 カジノフロア</h2>
+            
+            <!-- モード切替ボタン -->
+            <button class="mode-btn" id="mode-toggle-btn" onclick="toggleSecretMode()">🔥 通常モード（1回100チップ）</button>
+
             <div class="form-group">
                 <label>TikTokネーム</label>
                 <input type="text" id="player-name" placeholder="例：@brainrot_king">
             </div>
             <div class="form-group">
-                <label>所持チップ（1回 100ベット）</label>
+                <label>所持チップ</label>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <div id="player-chips" style="font-size: 1.4rem; color: var(--accent-gold); font-weight: bold;">500 枚</div>
-                    <button onclick="addChips(100)" style="width: auto; padding: 4px 8px; font-size: 0.8rem;">+100追加</button>
+                    <div id="player-chips" style="font-size: 1.3rem; color: var(--accent-gold); font-weight: bold;">500 枚</div>
+                    <button onclick="addChips(100)" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">+100追加</button>
                 </div>
             </div>
 
-            <!-- 12枚のカード置き場 -->
+            <!-- 20枚のカード置き場（5×4） -->
             <div class="cards-grid" id="cards-container">
                 <!-- JavaScriptで自動生成 -->
             </div>
 
-            <button id="reset-cards-btn" onclick="initCards()" style="background: linear-gradient(45deg, #444, #666); margin-top: 5px;">カードをシャッフルし直す</button>
-            <div class="status-box" id="result-message">名前を入れてカードを1枚選んでね！[span_0](start_span)[span_0](end_span)</div>
+            <button id="reset-cards-btn" onclick="initCards()" style="background: linear-gradient(45deg, #444, #666); margin-top: 3px;">カードをシャッフルし直す</button>
+            <div class="status-box" id="result-message">名前を入れてカードを1枚選んでね！</div>
         </div>
 
         <!-- 右側：インフォメーション / カスタム編集 -->
@@ -235,22 +276,26 @@
             <h2>📌 インフォメーション / カスタム編集</h2>
             
             <div class="preview-box" id="display-area">
-                <p><b>✨ カードめくりルール</b></p>
-                <p>・1回 100チップ消費！[span_1](start_span)[span_1](end_span)</p>
-                <p>・12枚から1枚選ぶよ！[span_2](start_span)[span_2](end_span)</p>
-                <p>・👑 大当たり(1枚)：500チップ</p>
-                <p>・🎉 当たり(3枚)：200チップ</p>
-                <p>・💀 はずれ(8枚)：没収</p>
+                <p><b>✨ 20枚カードルール</b></p>
+                <p>・通常：1回100 / 裏：1回500チップ</p>
+                <p>・👑 超大当たり(1枚)：大金獲得</p>
+                <p>・🎉 当たり(3枚)：チップ獲得</p>
+                <p>・😈 詐欺師降臨(4枚)：-200(-600)没収</p>
+                <p>・🔄 リベンジ(3枚)：没収なし再挑戦</p>
+                <p>・💣 爆弾(2枚)：全チップ没収</p>
+                <p>・💀 はずれ(7枚)：通常小額没収</p>
             </div>
 
             <div class="form-group">
                 <label>📝 ルール・紹介文の編集（HTMLタグ使用可）</label>
-                <textarea id="custom-input"><p><b>✨ カードめくりルール</b></p>
-<p>・1回 100チップ消費！</p>
-<p>・12枚から1枚選ぶよ！</p>
-<p>・👑 大当たり(1枚)：500チップ</p>
-<p>・🎉 当たり(3枚)：200チップ</p>
-<p>・💀 はずれ(8枚)：没収</p></textarea>
+                <textarea id="custom-input"><p><b>✨ 20枚カードルール</b></p>
+<p>・通常：1回100 / 裏：1回500チップ</p>
+<p>・👑 超大当たり(1枚)：大金獲得</p>
+<p>・🎉 当たり(3枚)：チップ獲得</p>
+<p>・😈 詐欺師降臨(4枚)：-200(-600)没収</p>
+<p>・🔄 リベンジ(3枚)：没収なし再挑戦</p>
+<p>・💣 爆弾(2枚)：全チップ没収</p>
+<p>・💀 はずれ(7枚)：通常小額没収</p></textarea>
             </div>
             <button onclick="updateFreeArea()">インフォを反映する！</button>
         </div>
@@ -260,6 +305,7 @@
         let chips = 500;
         let cardPool = []; 
         let isGameActive = false;
+        let isSecretMode = false;
 
         function updateDisplay() {
             document.getElementById('player-chips').innerText = chips + ' 枚';
@@ -275,53 +321,102 @@
             document.getElementById('display-area').innerHTML = userInput;
         }
 
-        // カードの初期化（シャッフル）
+        // 裏カジノモードの切り替え
+        function toggleSecretMode() {
+            isSecretMode = !isSecretMode;
+            const btn = document.getElementById('mode-toggle-btn');
+            const panel = document.getElementById('casino-panel');
+            const mainTitle = document.getElementById('main-title');
+            const subTitle = document.getElementById('sub-title');
+            const panelTitle = document.getElementById('panel-title');
+
+            if (isSecretMode) {
+                btn.className = 'mode-btn active-secret';
+                btn.innerText = '🔥 【裏カジノモード起動中！】(1回500ベット・景品3倍)';
+                panel.className = 'panel secret-mode';
+                mainTitle.innerHTML = '🔥 💀 裏カジノモード（20枚） 💀 🔥';
+                subTitle.innerHTML = '〜 一撃で億り人を目指せ！地獄のハイリスク 〜';
+                panelTitle.innerHTML = '🎲 裏カジノフロア';
+            } else {
+                btn.className = 'mode-btn';
+                btn.innerText = '🔥 通常モード切替（現在：通常 / 1回100チップ）';
+                panel.className = 'panel';
+                mainTitle.innerHTML = '🃏 20枚カードめくりカジノ 🃏';
+                subTitle.innerHTML = '〜 20枚のグリッドから運命の1枚を選べ！ 〜';
+                panelTitle.innerHTML = '🎲 カジノフロア';
+            }
+        }
+
+        // カードの初期化（シャッフル：計20枚）
+        // コード定義: 
+        // 3: 超大当たり(1枚)
+        // 2: 当たり(3枚)
+        // -2: 詐欺師(4枚)
+        // 1: リベンジ(3枚)
+        // -99: 爆弾(2枚)
+        // 0: はずれ(7枚)
         function initCards() {
             const name = document.getElementById('player-name').value.trim();
             if (!name) {
                 alert('先にTikTokネームを入力してください！');
                 return;
             }
-            if (chips < 100) {
-                alert('チップが100枚未満のためプレイできません！「+100追加」してください！');
+
+            const betCost = isSecretMode ? 500 : 100;
+            if (chips < betCost) {
+                alert(`チップが${betCost}枚未満のためプレイできません！「+100追加」してください！`);
                 return;
             }
 
-            cardPool = [2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0];
+            cardPool = [3, 2, 2, 2, -2, -2, -2, -2, 1, 1, 1, -99, -99, 0, 0, 0, 0, 0, 0, 0];
             for (let i = cardPool.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [cardPool[i], cardPool[j]] = [cardPool[j], cardPool[i]];
             }
 
             isGameActive = true;
-            document.getElementById('result-message').innerText = `${name} さん、12枚からカードを1枚選んでね！`;
+            const modeText = isSecretMode ? '🔥【裏カジノ】500ベット！' : '';
+            document.getElementById('result-message').innerText = `${name} さん、1〜20からカードを1枚選んでね！ ${modeText}`;
             
             renderCards(false);
         }
 
-        // カードを描画
+        // カードを描画（20枚）
         function renderCards(revealAll) {
             const container = document.getElementById('cards-container');
             container.innerHTML = '';
 
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < 20; i++) {
                 const card = document.createElement('div');
                 card.className = 'card';
                 
                 if (revealAll) {
                     card.classList.add('flipped');
-                    if (cardPool[i] === 2) {
+                    const val = cardPool[i];
+                    if (val === 3) {
                         card.classList.add('jackpot');
-                        card.innerText = '👑500';
-                    } else if (cardPool[i] === 1) {
+                        const jpVal = isSecretMode ? '1500' : '500';
+                        card.innerHTML = `<span class="card-num">No.${i+1}</span>👑${jpVal}`;
+                    } else if (val === 2) {
                         card.classList.add('win');
-                        card.innerText = '🎉200';
+                        const winVal = isSecretMode ? '600' : '200';
+                        card.innerHTML = `<span class="card-num">No.${i+1}</span>🎉${winVal}`;
+                    } else if (val === -2) {
+                        card.classList.add('scam');
+                        const scamVal = isSecretMode ? '-600' : '-200';
+                        card.innerHTML = `<span class="card-num">No.${i+1}</span>😈詐欺${scamVal}`;
+                    } else if (val === 1) {
+                        card.classList.add('revenge');
+                        card.innerHTML = `<span class="card-num">No.${i+1}</span>🔄リベンジ`;
+                    } else if (val === -99) {
+                        card.classList.add('bomb');
+                        card.innerHTML = `<span class="card-num">No.${i+1}</span>💣爆弾0`;
                     } else {
                         card.classList.add('lose');
-                        card.innerText = '💀ハズレ';
+                        card.innerHTML = `<span class="card-num">No.${i+1}</span>💀はずれ`;
                     }
                 } else {
-                    card.innerText = `?`;
+                    card.innerHTML = `<span class="card-num">No.${i+1}</span>❓`;
                     card.onclick = () => selectCard(i);
                 }
                 container.appendChild(card);
@@ -331,27 +426,46 @@
         // カードを選んだときの処理
         function selectCard(index) {
             if (!isGameActive) {
-                alert('下にある「カードをシャッフルし直す」を押して100チップを支払い、ゲームを開始してください！');
+                alert('下にある「カードをシャッフルし直す」を押してゲームを開始してください！');
                 return;
             }
 
             const name = document.getElementById('player-name').value.trim();
             isGameActive = false;
-            chips -= 100; 
+            
+            const betCost = isSecretMode ? 500 : 100;
+            chips -= betCost; // ベット額没収
             updateDisplay();
 
             const resultType = cardPool[index];
             renderCards(true); 
 
             let msg = '';
-            if (resultType === 2) {
-                chips += 500;
-                msg = `👑 <span style="color:#ffd700;">【大当たり！！】500チップ獲得！お見事！</span>`;
+            if (resultType === 3) {
+                const reward = isSecretMode ? 1500 : 500;
+                chips += reward;
+                msg = `👑 <span style="color:#ffd700;">【No.${index+1} 超大当たり！！】+${reward}チップ獲得！神引き！</span>`;
+            } else if (resultType === 2) {
+                const reward = isSecretMode ? 600 : 200;
+                chips += reward;
+                msg = `🎉 <span style="color:#00ff88;">【No.${index+1} 当たり！】+${reward}チップ獲得！</span>`;
+            } else if (resultType === -2) {
+                const scamLoss = isSecretMode ? 600 : 200;
+                chips -= scamLoss;
+                if (chips < 0) chips = 0;
+                msg = `😈 <span style="color:#ff00ff;">【No.${index+1} 詐欺師降臨】-${scamLoss}チップ没収…いてぇ！！</span>`;
             } else if (resultType === 1) {
-                chips += 200;
-                msg = `🎉 <span style="color:#00ff88;">【当たり！】200チップ獲得！やったね！</span>`;
+                chips += betCost; // ベット額返却（実質ノーダメージ＆引き直し権利）
+                msg = `🔄 <span style="color:#00ced1;">【No.${index+1} リベンジ！】チップ全額返却！もう一度シャッフルして再挑戦だ！</span>`;
+                isGameActive = true; // すぐに再挑戦できるようにアクティブ化
+            } else if (resultType === -99) {
+                chips = 0;
+                msg = `💣 <span style="color:#ff4500;">【No.${index+1} 爆弾発動！！】所持チップがすべて消滅（0枚）…南無阿弥陀仏ｗ</span>`;
             } else {
-                msg = `💀 <span style="color:#ff4444;">【はずれ】100チップ没収…残念！</span>`;
+                const loseCost = isSecretMode ? 500 : 100;
+                chips -= loseCost;
+                if (chips < 0) chips = 0;
+                msg = `💀 <span style="color:#ff4444;">【No.${index+1} はずれ】追加で-${loseCost}チップ没収…ざまぁwww</span>`;
             }
 
             document.getElementById('result-message').innerHTML = `${name}さんの結果： ${msg}`;
@@ -360,11 +474,11 @@
 
         // 初期表示時はカードを未選択状態にしておく
         const container = document.getElementById('cards-container');
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < 20; i++) {
             const card = document.createElement('div');
             card.className = 'card';
-            card.innerText = '-';
-            card.onclick = () => alert('先に上の「カードをシャッフルし直す（100チップ）」を押してね！');
+            card.innerHTML = `<span class="card-num">No.${i+1}</span>-`;
+            card.onclick = () => alert('先に上の「カードをシャッフルし直す」を押してね！');
             container.appendChild(card);
         }
         updateDisplay();
