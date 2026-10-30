@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ブレインロットカジノ</title>
+    <title>カードめくりカジノ</title>
     <style>
         :root {
             --bg-color: #0f051d;
@@ -19,7 +19,7 @@
             color: var(--text-main);
             font-family: 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -30,19 +30,20 @@
             text-shadow: 0 0 10px var(--accent-glow);
             margin-bottom: 5px;
             text-align: center;
+            font-size: 1.5rem;
         }
 
         .subtitle {
             color: var(--text-sub);
-            font-size: 0.9rem;
-            margin-bottom: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
             text-align: center;
         }
 
         .container {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
             max-width: 1000px;
             width: 100%;
             justify-content: center;
@@ -52,45 +53,45 @@
             background-color: var(--panel-bg);
             border: 2px solid var(--accent-glow);
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
             flex: 1;
-            min-width: 320px;
+            min-width: 300px;
         }
 
         h2 {
             border-bottom: 2px solid var(--accent-glow);
             padding-bottom: 5px;
             margin-top: 0;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--accent-gold);
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
+            margin-bottom: 4px;
+            font-size: 0.85rem;
             color: var(--text-sub);
         }
 
         input[type="text"], textarea {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             box-sizing: border-box;
             background: #2a1147;
             border: 1px solid #4a1d85;
             color: white;
             border-radius: 6px;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         textarea {
             resize: vertical;
-            height: 100px;
+            height: 90px;
             font-family: monospace;
         }
 
@@ -98,10 +99,10 @@
             background: linear-gradient(45deg, #ff007f, #7f00ff);
             color: white;
             border: none;
-            padding: 12px;
+            padding: 10px;
             width: 100%;
             border-radius: 6px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
@@ -113,79 +114,96 @@
             transform: scale(1.02);
         }
 
-        /* ルーレット部分：色と角度を明確に定義 */
-        .roulette-container {
-            position: relative;
-            width: 250px;
-            height: 250px;
-            margin: 20px auto;
+        /* 12枚カードのグリッドレイアウト（4列×3行） */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 15px 0;
         }
 
-        #roulette-wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 5px solid var(--accent-gold);
-            position: relative;
-            overflow: hidden;
-            transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
-            background: conic-gradient(
-                #ffd700 0deg 250deg,    /* 黄色エリア：0度〜250度 */
-                #44aa44 250deg 310deg,  /* 緑色エリア：250度〜310deg */
-                #ff4444 310deg 360deg   /* 赤色エリア：310度〜360deg */
-            );
+        .card {
+            background: linear-gradient(135deg, #2a1147, #4a1d85);
+            border: 2px solid var(--accent-glow);
+            border-radius: 8px;
+            aspect-ratio: 3 / 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 0 5px rgba(255, 0, 127, 0.3);
+            user-select: none;
         }
 
-        .roulette-pointer {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 20px solid var(--accent-gold);
-            z-index: 10;
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-gold);
+        }
+
+        .card.flipped {
+            background: #110422;
+            border-color: #666;
+            cursor: default;
+        }
+
+        .card.jackpot {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            border-color: #fff;
+        }
+
+        .card.win {
+            background: linear-gradient(135deg, #44aa44, #00ff88);
+            color: #000;
+            border-color: #fff;
+        }
+
+        .card.lose {
+            background: linear-gradient(135deg, #444, #222);
+            color: #888;
         }
 
         .status-box {
-            margin-top: 15px;
+            margin-top: 10px;
             padding: 10px;
             background: #110422;
             border-radius: 6px;
             text-align: center;
-            min-height: 40px;
+            min-height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            font-size: 0.95rem;
         }
 
         .preview-box {
             background: #110422;
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
-            font-size: 0.95rem;
-            line-height: 1.6;
+            font-size: 0.9rem;
+            line-height: 1.5;
             color: var(--text-main);
-            min-height: 120px;
+            min-height: 100px;
             border: 1px dashed #4a1d85;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .preview-box img {
             max-width: 100%;
             border-radius: 6px;
-            margin-top: 10px;
+            margin-top: 8px;
             border: 1px solid var(--accent-glow);
         }
     </style>
 </head>
 <body>
 
-    <h1>🎰 ブレインロットカジノ 🎰</h1>
-    <div class="subtitle">〜 1回100チップ・ルーレット配信ツール 〜</div>
+    <h1>🃏 カードめくりカジノ 🃏</h1>
+    <div class="subtitle">〜 1回100チップ・12枚から選ぶ運試し 〜</div>
 
     <div class="container">
         <!-- 左側：カジノフロア -->
@@ -198,36 +216,41 @@
             <div class="form-group">
                 <label>所持チップ（1回 100ベット）</label>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <div id="player-chips" style="font-size: 1.5rem; color: var(--accent-gold); font-weight: bold;">500 枚</div>
-                    <button onclick="addChips(100)" style="width: auto; padding: 5px 10px; font-size: 0.8rem;">+100追加</button>
+                    <div id="player-chips" style="font-size: 1.4rem; color: var(--accent-gold); font-weight: bold;">500 枚</div>
+                    <button onclick="addChips(100)" style="width: auto; padding: 4px 8px; font-size: 0.8rem;">+100追加</button>
                 </div>
             </div>
 
-            <!-- ルーレット本体 -->
-            <div class="roulette-container">
-                <div class="roulette-pointer"></div>
-                <div id="roulette-wheel"></div>
+            <!-- 12枚のカード置き場 -->
+            <div class="cards-grid" id="cards-container">
+                <!-- JavaScriptで自動生成 -->
             </div>
 
-            <button id="spin-btn" onclick="spinRoulette()">100チップ払って回す！</button>
-            <div class="status-box" id="result-message">名前を決めてスピン！</div>
+            <button id="reset-cards-btn" onclick="initCards()" style="background: linear-gradient(45deg, #444, #666); margin-top: 5px;">カードをシャッフルし直す</button>
+            <div class="status-box" id="result-message">名前を入れてカードを1枚選んでね！[span_2](start_span)[span_2](end_span)</div>
         </div>
 
-        <!-- 右側：自由に書き換えられるインフォメーション＆ルール -->
+        <!-- 右側：インフォメーション / カスタム編集 -->
         <div class="panel">
-            <h2>📌 インフォメーション / ルール</h2>
+            <h2>📌 インフォメーション / カスタム編集</h2>
             
             <div class="preview-box" id="display-area">
-                <p><b>✨ カジノのルール</b></p>
-                <p>・1回 100チップ消費！</p>
-                <p>・止まった色によって結果が変わるよ！</p>
+                <p><b>✨ カードめくりルール</b></p>
+                <p>・1回 100チップ消費！[span_3](start_span)[span_3](end_span)</p>
+                <p>・12枚から1枚選ぶよ！[span_4](start_span)[span_4](end_span)</p>
+                <p>・👑 大当たり(1枚)：500チップ</p>
+                <p>・🎉 当たり(3枚)：200チップ</p>
+                <p>・💀 はずれ(8枚)：没収</p>
             </div>
 
             <div class="form-group">
                 <label>📝 ルール・紹介文の編集（HTMLタグ使用可）</label>
-                <textarea id="custom-input"><p><b>✨ カジノのルール</b></p>
+                <textarea id="custom-input"><p><b>✨ カードめくりルール</b></p>
 <p>・1回 100チップ消費！</p>
-<p>・止まった色によって結果が変わるよ！</p></textarea>
+<p>・12枚から1枚選ぶよ！</p>
+<p>・👑 大当たり(1枚)：500チップ</p>
+<p>・🎉 当たり(3枚)：200チップ</p>
+<p>・💀 はずれ(8枚)：没収</p></textarea>
             </div>
             <button onclick="updateFreeArea()">インフォを反映する！</button>
         </div>
@@ -235,8 +258,8 @@
 
     <script>
         let chips = 500;
-        let isSpinning = false;
-        let currentRotation = 0;
+        let cardPool = []; // 12枚の中身 (0:はずれ, 1:当たり200, 2:大当たり500)
+        let isGameActive = false;
 
         function updateDisplay() {
             document.getElementById('player-chips').innerText = chips + ' 枚';
@@ -252,68 +275,100 @@
             document.getElementById('display-area').innerHTML = userInput;
         }
 
-        function spinRoulette() {
-            if (isSpinning) return;
+        // カードの初期化（シャッフル）
+        function initCards() {
             const name = document.getElementById('player-name').value.trim();
-            const bet = 100;
-
             if (!name) {
-                alert('TikTokネームを入力してください！');
+                alert('先にTikTokネームを入力してください！');
                 return;
             }
-            if (chips < bet) {
-                alert('チップが100枚未満のため回せません！「+100追加」で補充してください！');
+            if (chips < 100) {
+                alert('チップが100枚未満のためプレイできません！「+100追加」してください！');
                 return;
             }
 
-            isSpinning = true;
-            chips -= bet; // 100チップ消費
-            updateDisplay();
-            
-            document.getElementById('result-message').innerText = `${name} さんが 100チップベット！回転中……`;
-
-            // 【完全一致の抽選ロジック】
-            // CSSの配色にあわせて、着地する角度をランダムに決定
-            // 0: 黄色エリア (0〜250度)
-            // 1: 緑色エリア (250〜310度)
-            // 2: 赤色エリア (310〜360度)
-            const outcome = Math.floor(Math.random() * 3);
-
-            let targetDegree;
-            if (outcome === 0) {
-                targetDegree = Math.random() * 230 + 10; // 黄色
-            } else if (outcome === 1) {
-                targetDegree = Math.random() * 50 + 255;  // 緑
-            } else {
-                targetDegree = Math.random() * 45 + 315;  // 赤
+            // 12枚の内訳： 大当たり1枚(2)、当たり3枚(1)、はずれ8枚(0)
+            cardPool = [2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0];
+            // シャッフル
+            for (let i = cardPool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cardPool[i], cardPool[j]] = [cardPool[j], cardPool[i]];
             }
+
+            isGameActive = true;
+            document.getElementById('result-messageTbody'] || document.getElementById('result-message').innerText = `${name} さん、12枚からカードを1枚選んでね！`;
             
-            const extraSpins = 360 * 5; 
-            currentRotation += extraSpins + (targetDegree - (currentRotation % 360));
-
-            const wheel = document.getElementById('roulette-wheel');
-            wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-            setTimeout(() => {
-                isSpinning = false;
-                if (outcome === 0) {
-                    // 黄色：小当り（120チップ獲得）
-                    const reward = 120;
-                    chips += reward;
-                    document.getElementById('result-message').innerHTML = `💛 <span style="color:#ffd700;">【黄色】当り！(+${reward}チップ)</span>`;
-                } else if (outcome === 1) {
-                    // 緑：大当り（200チップ獲得）
-                    const reward = 200;
-                    chips += reward;
-                    document.getElementById('result-message').innerHTML = `🎉 <span style="color:#44aa44;">【緑】大当り！！(+${reward}チップ)</span>`;
-                } else {
-                    // 赤：はずれ（没収）
-                    document.getElementById('result-message').innerHTML = `💀 <span style="color:#ff4444;">【赤】はずれ(-100チップ)</span>`;
-                }
-                updateDisplay();
-            }, 4000);
+            renderCards(false);
         }
 
+        // カードを描画
+        function renderCards(revealAll, clickedIndex = -1) {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '';
+
+            for (let i = 0; i < 12; i++) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                if (revealAll) {
+                    card.classList.add('flipped');
+                    if (cardPool[i] === 2) {
+                        card.classList.add('jackpot');
+                        card.innerText = '👑500';
+                    } else if (cardPool[i] === 1) {
+                        card.classList.add('win');
+                        card.innerText = '🎉200';
+                    } else {
+                        card.classList.add('lose');
+                        card.innerText = '💀ハズレ';
+                    }
+                } else {
+                    card.innerText = `?`;
+                    card.onclick = () => selectCard(i);
+                }
+                container.appendChild(card);
+            }
+        }
+
+        // カードを選んだときの処理
+            function selectCard(index) {
+            if (!isGameActive) {
+                alert('下にある「カードをシャッフルし直す」を押して100チップを支払い、ゲームを開始してください！');
+                return;
+            }
+
+            const name = document.getElementById('player-name').value.trim();
+            isGameActive = false;
+            chips -= 100; // 参加費没収
+            updateDisplay();
+
+            const resultType = cardPool[index];
+            renderCards(true); // すべてのカードをめくる
+
+            let msg = '';
+            if (resultType === 2) {
+                chips += 500;
+                msg = `👑 <span style="color:#ffd700;">【大当たり！！】500チップ獲得！お見事！</span>`;
+            } else if (resultType === 1) {
+                chips += 200;
+                msg = `🎉 <span style="color:#00ff88;">【当たり！】200チップ獲得！やったね！</span>`;
+            } else {
+                msg = `💀 <span style="color:#ff4444;">【はずれ】100チップ没収…残念！</span>`;
+            }
+
+            document.getElementById('result-message').innerHTML = `${name}さんの結果： ${msg}`;
+            updateDisplay();
+        }
+
+        // 初期表示時はカードを未選択状態にしておく
+        const container = document.getElementById('cards-container');
+        for (let i = 0; i < 12; i++) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerText = '-';
+            card.onclick = () => alert('先に上の「カードをシャッフルし直す（100チップ）」を押してね！');
+            container.appendChild(card);
+        }
         updateDisplay();
     </script>
 </body>
