@@ -43,7 +43,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
-            max-width: 900px;
+            max-width: 1000px;
             width: 100%;
             justify-content: center;
         }
@@ -55,7 +55,7 @@
             padding: 20px;
             box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
             flex: 1;
-            min-width: 300px;
+            min-width: 320px;
         }
 
         h2 {
@@ -77,7 +77,7 @@
             color: var(--text-sub);
         }
 
-        input[type="text"] {
+        input[type="text"], textarea {
             width: 100%;
             padding: 10px;
             box-sizing: border-box;
@@ -86,6 +86,12 @@
             color: white;
             border-radius: 6px;
             font-size: 1rem;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 120px;
+            font-family: monospace;
         }
 
         button {
@@ -107,7 +113,7 @@
             transform: scale(1.02);
         }
 
-        /* ルーレット部分 */
+        /* ルーレット部分（心理戦：SSRが広く見えるが、止まるのはNかハズレ） */
         .roulette-container {
             position: relative;
             width: 250px;
@@ -123,9 +129,11 @@
             position: relative;
             overflow: hidden;
             transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
+            /* 見た目はSSR(金色)が約70%を占める心理戦仕様！ */
             background: conic-gradient(
-                #ff4444 0deg 180deg,
-                #44aa44 180deg 360deg
+                #ffd700 0deg 250deg,    
+                #ff4444 250deg 305deg,  
+                #44aa44 305deg 360deg   
             );
         }
 
@@ -155,17 +163,20 @@
             font-weight: bold;
         }
 
-        /* 自由記入エリア（右側）のスタイル */
-        .custom-content {
+        /* 表示用のプレビューエリア */
+        .preview-box {
             background: #110422;
             padding: 15px;
             border-radius: 8px;
             font-size: 0.95rem;
             line-height: 1.6;
             color: var(--text-main);
+            min-height: 150px;
+            border: 1px dashed #4a1d85;
+            margin-bottom: 15px;
         }
 
-        .custom-content img {
+        .preview-box img {
             max-width: 100%;
             border-radius: 6px;
             margin-top: 10px;
@@ -176,10 +187,10 @@
 <body>
 
     <h1>🎰 ブレインロットカジノ 🎰</h1>
-    <div class="subtitle">〜 全ぶっぱ強制！絶望の50/50ルーレット 〜</div>
+    <div class="subtitle">〜 1回100チップ・心理戦ルーレット配信ツール 〜</div>
 
     <div class="container">
-        <!-- プレイヤー・ルーレットパネル -->
+        <!-- 左側：カジノフロア -->
         <div class="panel">
             <h2>🎲 カジノフロア</h2>
             <div class="form-group">
@@ -187,9 +198,9 @@
                 <input type="text" id="player-name" placeholder="例：@brainrot_king">
             </div>
             <div class="form-group">
-                <label>所持チップ（オールイン対象）</label>
+                <label>所持チップ（1回 100ベット）</label>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <div id="player-chips" style="font-size: 1.5rem; color: var(--accent-gold); font-weight: bold;">100 枚</div>
+                    <div id="player-chips" style="font-size: 1.5rem; color: var(--accent-gold); font-weight: bold;">500 枚</div>
                     <button onclick="addChips(100)" style="width: auto; padding: 5px 10px; font-size: 0.8rem;">+100追加</button>
                 </div>
             </div>
@@ -200,27 +211,36 @@
                 <div id="roulette-wheel"></div>
             </div>
 
-            <button id="spin-btn" onclick="spinRoulette()">全ぶっぱで回す！（オールイン）</button>
-            <div class="status-box" id="result-message">名前を決めて全ぶっぱスピン！</div>
+            <button id="spin-btn" onclick="spinRoulette()">100チップ払って回す！</button>
+            <div class="status-box" id="result-message">名前を決めてスピン！</div>
         </div>
 
-        <!-- 自由記入エリア（画像とテキストをここに書けます） -->
+        <!-- 右側：自由に書き換えられるテキスト・画像エリア -->
         <div class="panel">
             <h2>📌 インフォメーション / キャラ紹介</h2>
-            <div class="custom-content" id="free-area">
-                <!-- ここに自由なテキストや画像タグ（<img>）を書き込めます -->
-                <p><b>✨ 現在開催中のイベント・ルール</b></p>
-                <p>所持しているチップをすべて賭ける「全ぶっぱ（オールイン）」専用のカジノです！</p>
-                <p>当たれば微増、ハズレれば全ロス！</p>
-                
-                <!-- 画像を表示したいときは下のコメントアウトを外して画像のURLを入れてね -->
-                <!-- <img src="ここに画像のURLやファイル名を入れる" alt="キャラ画像"> -->
+            
+            <!-- リアルタイムプレビューされる場所 -->
+            <div class="preview-box" id="display-area">
+                <p><b>✨ 現在のルール</b></p>
+                <p>・1回 100チップ消費！</p>
+                <p>・見た目はSSRが爆当たりしそうですが…？w</p>
             </div>
+
+            <!-- 自由に文字が打てるテキスト欄 -->
+            <div class="form-group">
+                <label>📝 自由編集テキスト欄（HTMLタグ使用可）</label>
+                <textarea id="custom-input"><p><b>✨ 現在のルール</b></p>
+<p>・1回 100チップ消費！</p>
+<p>・見た目はSSRが爆当たりしそうですが…？w</p>
+<!-- 画像を入れたいときは下のタグのURLを書き換えてね -->
+<!-- <img src="画像のURL" alt="キャラ"> --></textarea>
+            </div>
+            <button onclick="updateFreeArea()">文字・画像を反映する！</button>
         </div>
     </div>
 
     <script>
-        let chips = 100;
+        let chips = 500; // 初期チップを少し余裕のある500に設定
         let isSpinning = false;
         let currentRotation = 0;
 
@@ -228,35 +248,49 @@
             document.getElementById('player-chips').innerText = chips + ' 枚';
         }
 
-        // チップをテスト用に追加できるボタン用
         function addChips(amount) {
             chips += amount;
             updateDisplay();
         }
 
+        // 自由テキスト欄の内容をプレビューに反映させる関数
+        function updateFreeArea() {
+            const userInput = document.getElementById('custom-input').value;
+            document.getElementById('display-area').innerHTML = userInput;
+        }
+
         function spinRoulette() {
             if (isSpinning) return;
             const name = document.getElementById('player-name').value.trim();
+            const bet = 100; // 1回固定のベット額
 
             if (!name) {
                 alert('TikTokネームを入力してください！');
                 return;
             }
-            if (chips <= 0) {
-                alert('チップが0枚のため、全ぶっぱできません！');
+            if (chips < bet) {
+                alert('チップが100枚未満のため回せません！「+100追加」で補充してください！');
                 return;
             }
 
             isSpinning = true;
-            const bet = chips; // 所持チップを全額ベット（全ぶっぱ）
-            chips = 0; // 一旦0にする（勝てば返る/増える）
+            chips -= bet; // 100チップ消費
             updateDisplay();
             
-            document.getElementById('result-message').innerText = `${name} さんが ${bet} チップ全ぶっぱ！回転中……`;
+            document.getElementById('result-message').innerText = `${name} さんが 100チップベット！回転中……`;
 
-            // イカサマ判定：N（50%）か はずれ（50%）
-            const isWin = Math.random() < 0.5; 
-            const targetDegree = isWin ? (Math.random() * 160 + 10) : (Math.random() * 160 + 190);
+            // 【完全犯罪イカサマ】
+            // 確率：Nが50% / はずれが50%（※見た目のSSRエリアには絶対に止まらない！）
+            const isN = Math.random() < 0.5; 
+
+            let targetDegree;
+            if (isN) {
+                // Nのエリア（305度〜360度）に強制着地
+                targetDegree = Math.random() * 50 + 310;
+            } else {
+                // はずれのエリア（250度〜305度）に強制着地
+                targetDegree = Math.random() * 50 + 255;
+            }
             
             const extraSpins = 360 * 5; 
             currentRotation += extraSpins + (targetDegree - (currentRotation % 360));
@@ -266,14 +300,12 @@
 
             setTimeout(() => {
                 isSpinning = false;
-                if (isWin) {
-                    // N：微増（全ぶっぱ額の1.2倍返し）
-                    const reward = Math.floor(bet * 1.2);
+                if (isN) {
+                    const reward = Math.floor(bet * 1.2); // 100 × 1.2 = 120チップバック（20チップの微増）
                     chips += reward;
-                    document.getElementById('result-message').innerHTML = `🎉 <span style="color:#44aa44;">【N】当り！(+${reward}チップ返還)</span> 命拾いしたな！`;
+                    document.getElementById('result-message').innerHTML = `🎉 <span style="color:#44aa44;">【N】当り！(+${reward}チップ獲得)</span> 微妙なプラス！`;
                 } else {
-                    // はずれ：全額没収（0のまま）
-                    document.getElementById('result-message').innerHTML = `💀 <span style="color:#ff4444;">【はずれ】全額没収！</span> 綺麗に溶けましたwww`;
+                    document.getElementById('result-message').innerHTML = `💀 <span style="color:#ff4444;">【はずれ】没収！(-100チップ)</span> 綺麗に溶けましたwww`;
                 }
                 updateDisplay();
             }, 4000);
