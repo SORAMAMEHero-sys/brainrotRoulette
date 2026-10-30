@@ -227,7 +227,7 @@
             </div>
 
             <button id="reset-cards-btn" onclick="initCards()" style="background: linear-gradient(45deg, #444, #666); margin-top: 5px;">カードをシャッフルし直す</button>
-            <div class="status-box" id="result-message">名前を入れてカードを1枚選んでね！[span_2](start_span)[span_2](end_span)</div>
+            <div class="status-box" id="result-message">名前を入れてカードを1枚選んでね！[span_0](start_span)[span_0](end_span)</div>
         </div>
 
         <!-- 右側：インフォメーション / カスタム編集 -->
@@ -236,8 +236,8 @@
             
             <div class="preview-box" id="display-area">
                 <p><b>✨ カードめくりルール</b></p>
-                <p>・1回 100チップ消費！[span_3](start_span)[span_3](end_span)</p>
-                <p>・12枚から1枚選ぶよ！[span_4](start_span)[span_4](end_span)</p>
+                <p>・1回 100チップ消費！[span_1](start_span)[span_1](end_span)</p>
+                <p>・12枚から1枚選ぶよ！[span_2](start_span)[span_2](end_span)</p>
                 <p>・👑 大当たり(1枚)：500チップ</p>
                 <p>・🎉 当たり(3枚)：200チップ</p>
                 <p>・💀 はずれ(8枚)：没収</p>
@@ -258,7 +258,7 @@
 
     <script>
         let chips = 500;
-        let cardPool = []; // 12枚の中身 (0:はずれ, 1:当たり200, 2:大当たり500)
+        let cardPool = []; 
         let isGameActive = false;
 
         function updateDisplay() {
@@ -287,22 +287,20 @@
                 return;
             }
 
-            // 12枚の内訳： 大当たり1枚(2)、当たり3枚(1)、はずれ8枚(0)
             cardPool = [2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0];
-            // シャッフル
             for (let i = cardPool.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [cardPool[i], cardPool[j]] = [cardPool[j], cardPool[i]];
             }
 
             isGameActive = true;
-            document.getElementById('result-messageTbody'] || document.getElementById('result-message').innerText = `${name} さん、12枚からカードを1枚選んでね！`;
+            document.getElementById('result-message').innerText = `${name} さん、12枚からカードを1枚選んでね！`;
             
             renderCards(false);
         }
 
         // カードを描画
-        function renderCards(revealAll, clickedIndex = -1) {
+        function renderCards(revealAll) {
             const container = document.getElementById('cards-container');
             container.innerHTML = '';
 
@@ -331,7 +329,7 @@
         }
 
         // カードを選んだときの処理
-            function selectCard(index) {
+        function selectCard(index) {
             if (!isGameActive) {
                 alert('下にある「カードをシャッフルし直す」を押して100チップを支払い、ゲームを開始してください！');
                 return;
@@ -339,11 +337,11 @@
 
             const name = document.getElementById('player-name').value.trim();
             isGameActive = false;
-            chips -= 100; // 参加費没収
+            chips -= 100; 
             updateDisplay();
 
             const resultType = cardPool[index];
-            renderCards(true); // すべてのカードをめくる
+            renderCards(true); 
 
             let msg = '';
             if (resultType === 2) {
